@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+
+	</head>
+
+	<body>
+		<div id="result">
+
+		</div>
+		<!--<script type="text/javascript" src="websocket.js"></script>-->
+		<script type="text/javascript" src="websockethelper.js"></script>
+		<script>
+			//JSocket.init();
+			
+			var json = {
+				messagefunc: onmessage,
+				loginfunc: onlogin,
+				onstatefunc: onstate
+			};
+			
+			//判断
+			if(true){
+				$.JsSocket(json);
+			}else{
+				//轮询
+				intervalAjax();
+			}
+			
+			//createWebSocket(onmessage, onlogin, onstate);
+
+			function onmessage(event) {
+				//收到消息的回调
+				console.log(event.data);
+			}
+
+			function onlogin(ws) {
+				var runTime = new Date().getTime() - base.getCookie('_startTime');
+				//超过20分钟获取新token
+		        if (runTime / 1000 >= 1200) {
+		            base.getToken(base.getCookie('_tk'),function(){
+		            	ws.send("Login " + base.getCookie('_tk'))
+		            });
+		        }
+			}
+
+			function onstate(connstate) {
+				switch(connstate) {
+
+					case ConnState.Init:
+						console.log("init");
+						break;
+					case ConnState.Connected:
+						console.log("Connected");
+						break;
+					case ConnState.Reconnect:
+						console.log("Reconnect");
+						break;
+					case ConnState.Close:
+						console.log("Close");
+						break;
+					case ConnState.Logining:
+						console.log("Logining");
+						break;
+					case ConnState.Logined:
+						console.log("Logined");
+						break;
+					case ConnState.Error:
+						console.log("Error");
+						break;
+				}
+			}
+		</script>
+	</body>
+
+</html>
